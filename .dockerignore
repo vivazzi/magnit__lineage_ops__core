@@ -1,0 +1,39 @@
+# - project files & directories -
+local
+.gitignore
+.dockerignore
+Dockerfile*
+README.md
+
+
+# - environment variables -
+.env
+
+
+# - packages -
+node_modules
+
+
+# - build artifacts & reports -
+dist
+test-results/
+playwright-report/
+coverage
+generated
+
+
+# - editors and git -
+.git
+.idea
+.vscode
+
+
+# - cache & temp -
+*~
+*.log
+pnpm-debug.log*
+*.local
+*.map
+.tmp
+*.tsbuildinfo
+.DS_Store

@@ -1,0 +1,34 @@
+# - project files & directories -
+local
+
+
+# - environment variables -
+.env
+
+
+# - packages -
+node_modules
+
+
+# - build artifacts & reports -
+dist
+test-results/
+playwright-report/
+coverage
+generated
+
+
+# - editors -
+.idea
+.vscode
+
+
+# - cache & temp -
+*~
+*.log
+pnpm-debug.log*
+*.local
+*.map
+.tmp
+*.tsbuildinfo
+.DS_Store

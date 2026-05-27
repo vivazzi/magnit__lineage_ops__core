@@ -1,0 +1,23 @@
+ARG REGISTRY_HOST
+ARG NODE_IMAGE
+FROM ${REGISTRY_HOST}${NODE_IMAGE}
+
+ARG HTTP_PROXY
+ENV HTTP_PROXY=$HTTP_PROXY
+ENV HTTPS_PROXY=$HTTP_PROXY
+
+WORKDIR /app
+
+RUN apk add --no-cache curl && \
+    npm install -g pnpm@11.3.0
+
+ENV PRISMA_SKIP_POSTINSTALL_GENERATE=true
+
+COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
+RUN pnpm i --frozen-lockfile
+
+COPY prisma ./prisma
+ENV PRISMA_GENERATE_SKIP_AUTOINSTALL=true
+RUN pnpm prisma generate
+
+COPY . .
