@@ -6,7 +6,7 @@
 
 ```
 DB = source of truth | Источник правды
-lineage_export_worker = heavy processing layer | Исполнитель по генерации export-файла
+export_worker = heavy processing layer | Исполнитель по генерации export-файла
 core = orchestration layer | Слой оркестрации (создание задачи, проверка статуса)
 nginx = file delivery layer | Доставка файла
 client = polling client | Клиент (Площадка данных, Дата Каталог, ОМД, ...), посылает запрос на создание файла, периодически опрашивает статус
@@ -29,7 +29,7 @@ client = polling client | Клиент (Площадка данных, Дата 
 2. [core] Функция `create_lineage_task` извлекает из `object_url` (`url` объекта в Дата Каталоге) параметры, необходимые для создания задачи в БД
 
 
-3. [lineage_export_worker] Worker выбирает из БД задачи со статусом `new` и создаёт файлы экспорта, обращаясь к EDC API для получения lineage данных.
+3. [export_worker] Worker выбирает из БД задачи со статусом `new` и создаёт файлы экспорта, обращаясь к EDC API для получения lineage данных.
 
    Во время обработки происходят переходы статусов:
 
