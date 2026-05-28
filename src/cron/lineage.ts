@@ -31,7 +31,7 @@ const clean_expired_files = async () => {
     const now = Math.floor(Date.now() / 1000)
 
     // 1️⃣ Сначала выбираем все файлы ready, которые просрочены
-    const expired_rows = await prisma_db.t_lineage_export.findMany({
+    const expired_rows = await prisma_db.lineage_export.findMany({
         where: { status: 'ready', expired_at: { lt: now } },
         select: { id: true, path: true },
     })
@@ -43,7 +43,7 @@ const clean_expired_files = async () => {
     // 2️⃣ Ставим всем статус 'expiring', чтобы никто другой не схватил
     await Promise.all(
         expired_rows.map(row =>
-            prisma_db.t_lineage_export.update({
+            prisma_db.lineage_export.update({
                 where: { id: row.id },
                 data: { status: 'expiring' },
             }),
@@ -58,7 +58,7 @@ const clean_expired_files = async () => {
 
             await delete_file_and_maybe_folder(full_path)
 
-            await prisma_db.t_lineage_export.update({
+            await prisma_db.lineage_export.update({
                 where: { id: row.id },
                 data: { status: 'expired' },
             })

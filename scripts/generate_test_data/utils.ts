@@ -8,7 +8,7 @@ export const db_orm = new PrismaClient()
 export const remove_data = async () => {
     log('Remove all data...', false)
 
-    await db_orm.t_lineage_export.deleteMany()
+    await db_orm.lineage_export.deleteMany()
 
     log('OK')
     log('')

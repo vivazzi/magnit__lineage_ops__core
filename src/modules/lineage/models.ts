@@ -2,6 +2,7 @@ import { z } from 'zod'
 import { extendZodWithOpenApi } from '@asteasolutions/zod-to-openapi'
 
 import { LineageDirection, LineageExportStatus } from '#root/generated/prisma'
+import { timestamp } from '#src/utils/datetime.ts'
 
 extendZodWithOpenApi(z)
 
@@ -19,7 +20,7 @@ export type TLineageExportInput = z.infer<typeof lineage_export_input>
 
 
 export const lineage_export_output = z.object({
-    task_id: z.coerce.number(),
+    task_id: z.coerce.number().int(),
     download_url: z.string(),
 })
 
@@ -27,7 +28,7 @@ export type TLineageExportOutput = z.infer<typeof lineage_export_output>
 
 
 export const lineage_task_id_input = z.object({
-    task_id: z.coerce.number(),
+    task_id: z.coerce.number().int(),
 })
 
 export type TLineageTaskIdInput = z.infer<typeof lineage_task_id_input>
@@ -42,17 +43,17 @@ export const lineage_status_output = z.object({
     status: z.nativeEnum(LineageExportStatus),
 
     result_code: result_codes.optional(),
-    attempt: z.number(),
+    attempt_count: z.number(),
 
     error_code: z.string().optional(),
     error_message: z.string().optional(),
 
     path: z.string().optional(),
 
-    created_at_ts: z.number(),
-    started_at_ts: z.number().optional(),
-    finished_at_ts: z.number().optional(),
-    expires_at_ts: z.number().optional(),
+    created_at: timestamp,
+    started_at: timestamp.optional(),
+    finished_at: timestamp.optional(),
+    expires_at: timestamp.optional(),
 }).superRefine((data, ctx) => {
     if (data.status === 'completed') {
         if (!data.path) {

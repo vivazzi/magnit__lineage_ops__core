@@ -1,13 +1,16 @@
-/* eslint-disable unicorn/no-null */
+ 
 import { log } from '../utils.ts'
 import { db_orm } from './utils.ts'
-import { LineageExportStatus, LineageDirection } from '#root/generated/prisma'
+import { LineageExportStatus, LineageDirection, LineageAssociation } from '#root/generated/prisma'
 
+
+const now = Date.now()
 
 const base_params = (i: number, suffix: string) => ({
     user_email: `${suffix}_${i}@test.ru`,
     obj_id: `obj_${suffix}_${i}`,
-    association: 'test',
+
+    association: LineageAssociation.table,
 
     is_reference_obj: false,
     direction: LineageDirection.in,
@@ -17,98 +20,89 @@ const base_params = (i: number, suffix: string) => ({
 })
 
 
-export const generate = async (count: number) => {
-    log('| t_lineage_export')
+const create_task = async (data: any) => db_orm.lineage_export.create({ data })
 
-    const base = Date.now()
+
+export const generate = async (count: number) => {
+    log('| lineage_export')
+
     const tasks = []
 
     // -----------------------
     // NEW
     // -----------------------
     for (let i = 0; i < count; i++) {
-        const task = await db_orm.t_lineage_export.create({
-            data: {
+        tasks.push(
+            await create_task({
                 status: LineageExportStatus.new,
-
-                created_at_ts: BigInt(base + i),
-
+                created_at: new Date(now + i),
+                attempt_count: 0,
                 ...base_params(i, 'new'),
-            },
-        })
-
-        tasks.push(task)
+            }),
+        )
     }
 
     // -----------------------
     // IN_PROGRESS
     // -----------------------
     for (let i = 0; i < count; i++) {
-        const task = await db_orm.t_lineage_export.create({
-            data: {
+        tasks.push(
+            await create_task({
                 status: LineageExportStatus.in_progress,
-
-                created_at_ts: BigInt(base + 1000 + i),
-                started_at_ts: BigInt(base + 2000 + i),
-                attempt: 1,
-
+                created_at: new Date(now + 1000 + i),
+                started_at: new Date(now + 2000 + i),
+                attempt_count: 1,
                 ...base_params(i, 'progress'),
-            },
-        })
-
-        tasks.push(task)
+            }),
+        )
     }
 
     // -----------------------
     // COMPLETED
     // -----------------------
     for (let i = 0; i < count; i++) {
-        const task = await db_orm.t_lineage_export.create({
-            data: {
+        tasks.push(
+            await create_task({
                 status: LineageExportStatus.completed,
 
-                created_at_ts: BigInt(base + 3000 + i),
-                started_at_ts: BigInt(base + 4000 + i),
-                finished_at_ts: BigInt(base + 5000 + i),
+                created_at: new Date(now + 3000 + i),
+                started_at: new Date(now + 4000 + i),
+                finished_at: new Date(now + 5000 + i),
 
-                attempt: 2,
+                attempt_count: 2,
 
                 result_code: 'ready',
-                error_code: null,
-                error_message: null,
+                error_code: undefined,
+                error_message: undefined,
                 path: `/tmp/export_completed_${i}.xlsx`,
 
                 ...base_params(i, 'completed'),
-            },
-        })
-
-        tasks.push(task)
+            }),
+        )
     }
 
     // -----------------------
     // FAILED
     // -----------------------
     for (let i = 0; i < count; i++) {
-        const task = await db_orm.t_lineage_export.create({
-            data: {
+        tasks.push(
+            await create_task({
                 status: LineageExportStatus.failed,
 
-                created_at_ts: BigInt(base + 6000 + i),
-                started_at_ts: BigInt(base + 7000 + i),
-                finished_at_ts: BigInt(base + 8000 + i),
+                created_at: new Date(now + 6000 + i),
+                started_at: new Date(now + 7000 + i),
+                finished_at: new Date(now + 8000 + i),
 
-                attempt: 3,
+                attempt_count: 3,
 
-                result_code: null,
+                result_code: undefined,
                 error_code: 'timeout',
                 error_message: 'Generation timeout',
-                path: null,
+                path: undefined,
 
                 ...base_params(i, 'failed'),
-            },
-        })
-
-        tasks.push(task)
+            }),
+        )
     }
 
     log(`created: ${tasks.length}`)

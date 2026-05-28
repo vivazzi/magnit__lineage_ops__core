@@ -1,0 +1,21 @@
+import { to_ts, to_ts_optional } from '#src/modules/lineage/utils.ts'
+import { result_codes } from '#src/modules/lineage/models.ts'
+import type { lineage_export } from '#root/generated/prisma'
+
+
+export const map_lineage_task = (row: lineage_export) => ({
+    status: row.status,
+
+    result_code: row.result_code ? result_codes.parse(row.result_code) : undefined,
+    attempt_count: row.attempt_count,
+
+    error_code: row.error_code ?? undefined,
+    error_message: row.error_message ?? undefined,
+
+    path: row.path ?? undefined,
+
+    created_at: to_ts(row.created_at),
+    started_at: to_ts_optional(row.started_at),
+    finished_at: to_ts_optional(row.finished_at),
+    expires_at: to_ts_optional(row.expires_at),
+})

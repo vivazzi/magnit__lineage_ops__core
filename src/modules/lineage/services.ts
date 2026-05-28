@@ -1,8 +1,9 @@
 import { prisma_db, with_db } from '#src/utils/db.ts'
 
 import {
-    type TLineageStatusOutput, type TLineageExportInput, type TLineageExportOutput, type TLineageTaskIdInput, result_codes,
+    type TLineageStatusOutput, type TLineageExportInput, type TLineageExportOutput, type TLineageTaskIdInput,
 } from './models.ts'
+import { map_lineage_task } from '#src/modules/lineage/mapper.ts'
 
 
 const extract_obj_id_from_url = (url: string): string | undefined => {
@@ -39,10 +40,8 @@ export const create_lineage_task = with_db<
 
     const association = define_association(obj_id)
 
-    const lineage = await client.t_lineage_export.create({
+    const lineage = await client.lineage_export.create({
         data: {
-            created_at_ts: BigInt(Date.now()),
-
             user_email,
 
             obj_id,
@@ -63,22 +62,11 @@ export const get_lineage_task_status = with_db<
     TLineageTaskIdInput,
     TLineageStatusOutput | undefined
 >(prisma_db, async (client, { task_id }) => {
-    const row = await client.t_lineage_export.findUnique({
+    const row = await client.lineage_export.findUnique({
         where: { id: task_id },
     })
 
     if (!row) return undefined
 
-    return {
-        status: row.status,
-        result_code: row.result_code ? result_codes.parse(row.result_code) : undefined,
-        attempt: row.attempt,
-        error_code: row.error_code ?? undefined,
-        error_message: row.error_message ?? undefined,
-        path: row.path ?? undefined,
-        created_at_ts: Number(row.created_at_ts),
-        started_at_ts: row.started_at_ts ? Number(row.started_at_ts) : undefined,
-        finished_at_ts: row.finished_at_ts ? Number(row.finished_at_ts) : undefined,
-        expires_at_ts: row.expires_at_ts ? Number(row.expires_at_ts) : undefined,
-    }
+    return map_lineage_task(row)
 })

@@ -27,7 +27,14 @@ enum LineageDirection {
   @@schema("public")
 }
 
-model t_lineage_export {
+enum LineageAssociation {
+  column
+  table
+
+  @@schema("public")
+}
+
+model lineage_export {
   // job metadata
   id Int @id @default(autoincrement())
 
@@ -36,8 +43,8 @@ model t_lineage_export {
 
   // actual "result_code" see in zod schema
   // ex: ready, empty, not_found
-  result_code String?
-  attempt     Int     @default(0)
+  result_code   String?
+  attempt_count Int     @default(0)
 
   // actual "error_code" see in zod schema
   // ex: timeout
@@ -46,21 +53,21 @@ model t_lineage_export {
 
   path String?
 
-  created_at_ts  BigInt
-  started_at_ts  BigInt?
-  finished_at_ts BigInt?
-  expires_at_ts  BigInt?
+  created_at  DateTime  @default(now())
+  started_at  DateTime?
+  finished_at DateTime?
+  expires_at  DateTime?
 
   // export payload
   user_email            String
   obj_id                String
-  association           String
+  association           LineageAssociation
   is_reference_obj      Boolean
   direction             LineageDirection
   is_horizontal_lineage Boolean
   is_all_columns        Boolean
 
-  @@index([status, created_at_ts])
+  @@index([status, created_at])
   @@map("lineage_export")
   @@schema("public")
 }
