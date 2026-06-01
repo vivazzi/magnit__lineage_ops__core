@@ -41,36 +41,22 @@ export type TResultCode = z.infer<typeof result_codes>
 
 export const lineage_status_output = z.object({
     status: z.nativeEnum(LineageExportStatus),
-
     result_code: result_codes.optional(),
-    attempt_count: z.number(),
 
     error_code: z.string().optional(),
     error_message: z.string().optional(),
 
-    path: z.string().optional(),
-
-    created_at: timestamp,
-    started_at: timestamp.optional(),
-    finished_at: timestamp.optional(),
     expires_at: timestamp.optional(),
-}).superRefine((data, ctx) => {
-    if (data.status === 'completed') {
-        if (!data.path) {
-            ctx.addIssue({
-                code: z.ZodIssueCode.custom,
-                message: 'completed job must have path',
-                path: ['path'],
-            })
-        }
 
-        if (!data.result_code) {
-            ctx.addIssue({
-                code: z.ZodIssueCode.custom,
-                message: 'completed job must have result_code',
-                path: ['result_code'],
-            })
-        }
+    estimated_queue_delay_ms: z.number().optional(),
+    estimated_processing_duration_ms: z.number().optional(),
+}).superRefine((data, ctx) => {
+    if (data.status === 'completed' && !data.result_code) {
+        ctx.addIssue({
+            code: z.ZodIssueCode.custom,
+            message: 'completed job must have result_code',
+            path: ['result_code'],
+        })
     }
 })
 

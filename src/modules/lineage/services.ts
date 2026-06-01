@@ -4,6 +4,7 @@ import {
     type TLineageStatusOutput, type TLineageExportInput, type TLineageExportOutput, type TLineageTaskIdInput,
 } from './models.ts'
 import { map_lineage_task } from '#src/modules/lineage/mapper.ts'
+import { ROUTES } from '#src/modules/lineage/routes.const.ts'
 
 
 const extract_obj_id_from_url = (url: string): string | undefined => {
@@ -53,7 +54,7 @@ export const create_lineage_task = with_db<
         },
     })
 
-    return { task_id: lineage.id, download_url: `/lineage/${lineage.id}` }
+    return { task_id: lineage.id, download_url: ROUTES.LINEAGE_DOWNLOAD.replace(':task_id', lineage.id.toString()) }
 })
 
 
