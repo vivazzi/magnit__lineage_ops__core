@@ -1,8 +1,8 @@
 import express, { type Express } from 'express'
 
-import { cors_middleware } from './middlewares'
+import { cors_middleware } from '../middlewares'
 import { router } from './routers.ts'
-import { config, NODE_ENVS } from './config'
+import { config, NODE_ENVS } from '../config'
 
 
 const app: Express = express()

@@ -1,7 +1,7 @@
 import { Router } from 'express'
 
-import { swagger_router } from './swagger'
-import { lineage_router } from './modules'
+import { swagger_router } from '../swagger'
+import { lineage_router } from '../modules'
 
 
 const router: Router = Router()
