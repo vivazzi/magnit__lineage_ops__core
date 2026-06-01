@@ -18,6 +18,6 @@ RUN pnpm i --frozen-lockfile
 
 COPY prisma ./prisma
 ENV PRISMA_GENERATE_SKIP_AUTOINSTALL=true
-RUN pnpm prisma generate
+RUN NODE_TLS_REJECT_UNAUTHORIZED=0 pnpm prisma generate
 
 COPY . .
