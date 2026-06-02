@@ -1,4 +1,4 @@
-import { to_timestamp, to_timestamp_optional } from '#shared'
+import { date_to_timestamp, date_to_timestamp_optional } from '#shared'
 
 import { result_codes } from './schemas.ts'
 import type { TLineageExport } from '#infra/db'
@@ -15,10 +15,10 @@ export const map_lineage_task = (row: TLineageExport) => ({
 
     path: row.path ?? undefined,
 
-    created_at: to_timestamp(row.created_at),
-    started_at: to_timestamp_optional(row.started_at),
-    finished_at: to_timestamp_optional(row.finished_at),
-    expires_at: to_timestamp_optional(row.expires_at),
+    created_at: date_to_timestamp(row.created_at),
+    started_at: date_to_timestamp_optional(row.started_at),
+    finished_at: date_to_timestamp_optional(row.finished_at),
+    expires_at: date_to_timestamp_optional(row.expires_at),
 })
 
 
@@ -29,7 +29,7 @@ export const map_lineage_task = (row: TLineageExport) => ({
 //
 //     error_code: row.error_code ?? undefined,
 //
-//     expires_at: to_timestamp_optional(row.expires_at),
+//     expires_at: date_to_timestamp_optional(row.expires_at),
 //
 //     estimated_queue_delay_ms: undefined,
 //     estimated_processing_duration_ms: undefined,

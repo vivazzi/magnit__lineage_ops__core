@@ -1,2 +1,2 @@
 export { timestamp, type TTimestamp } from './schemas.ts'
-export { to_timestamp, to_timestamp_optional } from './utils.ts'
+export { date_to_timestamp, date_to_timestamp_optional, ms_to_timestamp } from './utils.ts'

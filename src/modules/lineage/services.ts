@@ -19,6 +19,14 @@ const define_association = (obj_id: string): 'column' | 'table' => {
 }
 
 
+const get_or_create_user = async (client: typeof db, email: string) =>
+    client.user.upsert({
+        where: { email },
+        update: {},
+        create: { email },
+    })
+
+
 export const create_lineage_task = with_db<
     typeof db,
     TLineageExportInput,
@@ -39,9 +47,11 @@ export const create_lineage_task = with_db<
 
     const association = define_association(obj_id)
 
+    const user = await get_or_create_user(client, user_email)
+
     const lineage = await client.lineage_export.create({
         data: {
-            user_email,
+            user_id: user.id,
 
             obj_id,
             association,

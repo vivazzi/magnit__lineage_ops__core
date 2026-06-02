@@ -8,6 +8,7 @@ import { with_error_handler } from '#app/http'
 
 import { create_lineage_task, get_lineage_task_status } from './services.ts'
 import type { TLineageExportInput, TLineageTaskIdInput } from './schemas.ts'
+import { ms_to_timestamp } from '#shared'
 
 
 export const create_lineage_task_controller = with_error_handler<TLineageExportInput>(async (_req, res, body) => {
@@ -42,7 +43,7 @@ export const download_lineage_controller = with_error_handler<TLineageTaskIdInpu
         })
     }
 
-    if (data.expires_at && data.expires_at <= Date.now()) {
+    if (data.expires_at && data.expires_at <= ms_to_timestamp(Date.now())) {
         return res.status(410).json({
             error_code: 'file_expired',
         })

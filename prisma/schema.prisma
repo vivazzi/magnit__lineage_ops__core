@@ -10,6 +10,16 @@ datasource db {
   schemas           = ["public"]
 }
 
+model user {
+  id    Int    @id @default(autoincrement())
+  email String @unique
+
+  lineage_exports lineage_export[]
+
+  @@map("user")
+  @@schema("public")
+}
+
 enum LineageExportStatus {
   new
   in_progress
@@ -58,8 +68,10 @@ model lineage_export {
   finished_at DateTime?
   expires_at  DateTime?
 
+  user_id Int
+  user    user @relation(fields: [user_id], references: [id])
+
   // export payload
-  user_email            String
   obj_id                String
   association           LineageAssociation
   is_reference_obj      Boolean
@@ -68,6 +80,7 @@ model lineage_export {
   is_all_columns        Boolean
 
   @@index([status, created_at])
+  @@index([user_id])
   @@map("lineage_export")
   @@schema("public")
 }
