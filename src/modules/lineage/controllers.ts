@@ -26,7 +26,10 @@ export const get_lineage_status_controller = with_error_handler<TLineageTaskIdIn
         })
     }
 
-    return res.json(data)
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { path, ...safe_data } = data
+
+    return res.json(safe_data)
 })
 
 
@@ -36,6 +39,12 @@ export const download_lineage_controller = with_error_handler<TLineageTaskIdInpu
     if (!data) {
         return res.status(404).json({
             message_code: 'task_not_found',
+        })
+    }
+
+    if (data.expires_at && data.expires_at <= Date.now()) {
+        return res.status(410).json({
+            error_code: 'file_expired',
         })
     }
 

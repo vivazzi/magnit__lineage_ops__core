@@ -6,7 +6,8 @@
   "scripts": {
     "start:dev": "tsx watch ./src/app/server.ts",
     "start:prod": "tsx ./src/app/server.ts",
-    "start:cron_clean": "tsx ./src/cron/lineage.ts",
+    "start:cron_clean:dev": "tsx watch ./src/modules/lineage/jobs/remove_expired_lineage.ts",
+    "start:cron_clean": "tsx ./src/modules/lineage/jobs/remove_expired_lineage.ts",
     "test": "vitest",
     "lint": "eslint",
     "lint:fix": "eslint --fix",
@@ -41,7 +42,7 @@
     "eslint-plugin-unicorn": "^57.0.0",
     "prisma": "^6.16.2",
     "supertest": "^7.1.4",
-    "tsx": "^4.20.5",
+    "tsx": "^4.22.4",
     "typescript": "^5.5.4",
     "typescript-eslint": "^8.29.0",
     "vite-tsconfig-paths": "^5.1.4",

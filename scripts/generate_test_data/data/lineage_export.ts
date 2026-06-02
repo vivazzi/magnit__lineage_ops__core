@@ -1,3 +1,5 @@
+import fs from 'node:fs'
+
 import { db, LineageExportStatus, LineageDirection, LineageAssociation, type TPrisma } from '#db'
 
 import { now } from '#scripts/shared'
@@ -28,6 +30,17 @@ const create_many = (items: TCreateInput[]) => {
 }
 
 
+const seed_file = (name: string) => {
+    const path = `/tmp/lineage_seed/${name}`
+
+    fs.mkdirSync('/tmp/lineage_seed', { recursive: true })
+
+    fs.writeFileSync(path, 'test data')
+
+    return path
+}
+
+
 export class LineageExportSeed implements Seed {
     name = 'lineage_export'
 
@@ -40,8 +53,9 @@ export class LineageExportSeed implements Seed {
         await this.generate_in_progress(count)
         await this.generate_completed(count)
         await this.generate_failed(count)
+        await this.generate_expired(count)
 
-        seed_logger.success(`done: ${count * 4}`)
+        seed_logger.success(`Generated items: ${count * 5}`)
     }
 
     // -----------------------
@@ -109,6 +123,29 @@ export class LineageExportSeed implements Seed {
                 error_message: 'Generation timeout',
 
                 ...base_params(i, 'failed'),
+            })),
+        )
+    }
+
+    // -----------------------
+    // EXPIRED
+    // -----------------------
+    private async generate_expired(count: number) {
+        const month_ago = now - 1000 * 60 * 60 * 24 * 30
+
+        await create_many(
+            Array.from({ length: count }, (_, i) => ({
+                status: LineageExportStatus.completed,
+                created_at: new Date(month_ago +  + i),
+                started_at: new Date(month_ago + 1000 + i),
+                finished_at: new Date(month_ago + 2000 + i),
+
+                result_code: 'ready',
+                expires_at: new Date(month_ago + 3000 + i),
+
+                path: seed_file(`expired_${i}.xlsx`),
+
+                ...base_params(i, 'expired'),
             })),
         )
     }

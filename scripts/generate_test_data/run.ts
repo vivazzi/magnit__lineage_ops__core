@@ -28,35 +28,29 @@ const main = async () => {
     const count = count_arg_index === -1 ? 100 : Number(args[count_arg_index+1])
     
     if (reset) {
-        await log.indent(async () => {
-            log.line('RESET DATABASE')
+        log.line('--- Test Data Generation ---\n')
 
-            await log.indent(async () => {
-                log.line('REMOVE DATA')
+        log.line('- Removing data... -')
 
-                for (const seed of seeds) {
-                    log.line(`🗑️ ${seed.name}`)
-                    await seed.remove(seed_logger)
-                }
+        for (const seed of seeds) {
+            log.line(`🗑️ ${seed.name}`)
+            await seed.remove(seed_logger)
+        }
 
-                log.line('DONE')
-            })
-        })
+        log.line('- OK -\n')
     }
 
     log.line('--- GENERATION ---')
 
-    await log.indent(async () => {
-        for (const seed of seeds) {
-            log.line(`| ${seed.name}`)
+    for (const seed of seeds) {
+        log.line(`| ${seed.name}`)
 
-            await log.indent(async () => {
-                await seed.generate(count, seed_logger)
-            })
-        }
-    })
+        await log.indent(async () => {
+            await seed.generate(count, seed_logger)
+        })
+    }
 
-    log.line('--- GENERATION: OK ---')
+    log.line('- OK -')
 }
 
 

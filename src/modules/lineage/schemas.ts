@@ -47,6 +47,7 @@ export const lineage_status_output = z.object({
     error_message: z.string().optional(),
 
     expires_at: timestamp.optional(),
+    path: z.string().optional(),  // todo: remove field from this dto (need refactoring: controllers.ts, services.ts)
 
     estimated_queue_delay_ms: z.number().optional(),
     estimated_processing_duration_ms: z.number().optional(),
