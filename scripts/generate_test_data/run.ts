@@ -1,9 +1,23 @@
 import { exit } from 'node:process'
 
-import { checks, log } from '../utils.ts'
-import { db_orm, remove_data } from './utils.ts'
-import { generate } from '#root/scripts/generate_test_data/seed.ts'
+import { db } from '#db'
 
+import { checks, log } from '#scripts/shared'
+
+import { LineageExportSeed } from './data'
+import type { SeedLogger } from './seed.ts'
+
+
+const seeds = [
+    new LineageExportSeed(),
+]
+
+const seed_logger: SeedLogger = {
+    info: log.line,
+    success: (t) => log.line(`✔ ${t}`),
+    warn: (t) => log.line(`⚠ ${t}`),
+    error: (t) => log.line(`✖ ${t}`),
+}
 
 const main = async () => {
     const args = process.argv.slice(2)
@@ -13,11 +27,36 @@ const main = async () => {
     const count_arg_index = args.findIndex(arg => arg.startsWith('--count'))
     const count = count_arg_index === -1 ? 100 : Number(args[count_arg_index+1])
     
-    if (reset) await remove_data()
+    if (reset) {
+        await log.indent(async () => {
+            log.line('RESET DATABASE')
 
-    log('--- GENERATION ---')
-    await generate(count)
-    log('--- GENERATION: OK ---')
+            await log.indent(async () => {
+                log.line('REMOVE DATA')
+
+                for (const seed of seeds) {
+                    log.line(`🗑️ ${seed.name}`)
+                    await seed.remove(seed_logger)
+                }
+
+                log.line('DONE')
+            })
+        })
+    }
+
+    log.line('--- GENERATION ---')
+
+    await log.indent(async () => {
+        for (const seed of seeds) {
+            log.line(`| ${seed.name}`)
+
+            await log.indent(async () => {
+                await seed.generate(count, seed_logger)
+            })
+        }
+    })
+
+    log.line('--- GENERATION: OK ---')
 }
 
 
@@ -27,5 +66,5 @@ try {
     console.error(error)
     exit(1)
 } finally {
-    await db_orm.$disconnect()
+    await db.$disconnect()
 }

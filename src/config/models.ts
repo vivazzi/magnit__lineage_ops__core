@@ -6,4 +6,4 @@ export const NODE_ENVS = {
 
 export type TNodeEnv = typeof NODE_ENVS[keyof typeof NODE_ENVS]
 
-export const node_envs = Object.values(NODE_ENVS) as [TNodeEnv, ...TNodeEnv[]]
+export const node_envs = Object.values(NODE_ENVS) as [TNodeEnv, ...TNodeEnv[]]  // cast to avoid zod ts warning

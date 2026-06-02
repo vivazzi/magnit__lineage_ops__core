@@ -1,8 +1,8 @@
 import { z } from 'zod'
 import { extendZodWithOpenApi } from '@asteasolutions/zod-to-openapi'
 
-import { LineageDirection, LineageExportStatus } from '#root/generated/prisma'
-import { timestamp } from '#src/utils/datetime.ts'
+import { timestamp } from '#shared'
+import { LineageDirection, LineageExportStatus } from '#db'
 
 extendZodWithOpenApi(z)
 

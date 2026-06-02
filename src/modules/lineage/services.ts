@@ -1,10 +1,10 @@
-import { prisma_db, with_db } from '#src/utils/db.ts'
+import { db, with_db } from '#db'
 
+import { ROUTES } from './router.ts'
 import {
     type TLineageStatusOutput, type TLineageExportInput, type TLineageExportOutput, type TLineageTaskIdInput,
-} from './models.ts'
-import { map_lineage_task } from '#src/modules/lineage/mapper.ts'
-import { ROUTES } from '#src/modules/lineage/routes.const.ts'
+} from './schemas.ts'
+import { map_lineage_task } from './mapper.ts'
 
 
 const extract_obj_id_from_url = (url: string): string | undefined => {
@@ -20,10 +20,10 @@ const define_association = (obj_id: string): 'column' | 'table' => {
 
 
 export const create_lineage_task = with_db<
-    typeof prisma_db,
+    typeof db,
     TLineageExportInput,
     TLineageExportOutput
->(prisma_db, async (client, {
+>(db, async (client, {
     object_url,
     user_email,
     is_reference_obj,
@@ -31,8 +31,6 @@ export const create_lineage_task = with_db<
     is_horizontal_lineage,
     is_all_columns,
 }) => {
-    // console.log('config.lineage.api_url', config.lineage.api_url)
-    // console.log('object_url', object_url)
     const obj_id = extract_obj_id_from_url(object_url)
 
     if (!obj_id) {
@@ -59,10 +57,10 @@ export const create_lineage_task = with_db<
 
 
 export const get_lineage_task_status = with_db<
-    typeof prisma_db,
+    typeof db,
     TLineageTaskIdInput,
     TLineageStatusOutput | undefined
->(prisma_db, async (client, { task_id }) => {
+>(db, async (client, { task_id }) => {
     const row = await client.lineage_export.findUnique({
         where: { id: task_id },
     })

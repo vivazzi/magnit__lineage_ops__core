@@ -2,7 +2,7 @@ import cron from 'node-cron'
 import { unlink, readdir, rmdir } from 'node:fs/promises'
 import path from 'node:path'
 
-import { prisma_db } from '#src/utils/db.ts'
+import { db } from '#db'
 
 
 const delete_file_and_maybe_folder = async (file_path: string) => {
@@ -31,7 +31,7 @@ const clean_expired_files = async () => {
     const now = Math.floor(Date.now() / 1000)
 
     // 1️⃣ Сначала выбираем все файлы ready, которые просрочены
-    const expired_rows = await prisma_db.lineage_export.findMany({
+    const expired_rows = await db.lineage_export.findMany({
         where: { status: 'ready', expired_at: { lt: now } },
         select: { id: true, path: true },
     })
@@ -43,7 +43,7 @@ const clean_expired_files = async () => {
     // 2️⃣ Ставим всем статус 'expiring', чтобы никто другой не схватил
     await Promise.all(
         expired_rows.map(row =>
-            prisma_db.lineage_export.update({
+            db.lineage_export.update({
                 where: { id: row.id },
                 data: { status: 'expiring' },
             }),
@@ -58,7 +58,7 @@ const clean_expired_files = async () => {
 
             await delete_file_and_maybe_folder(full_path)
 
-            await prisma_db.lineage_export.update({
+            await db.lineage_export.update({
                 where: { id: row.id },
                 data: { status: 'expired' },
             })
@@ -70,7 +70,7 @@ const clean_expired_files = async () => {
 
 
 const acquire_lock = async () => {
-    const result: any = await prisma_db.$queryRawUnsafe(
+    const result: any = await db.$queryRawUnsafe(
         'SELECT pg_try_advisory_lock(987654321) as locked',
     )
     return result[0]?.locked === true
@@ -78,7 +78,7 @@ const acquire_lock = async () => {
 
 
 const release_lock = async () => {
-    await prisma_db.$executeRawUnsafe('SELECT pg_advisory_unlock(987654321)')
+    await db.$executeRawUnsafe('SELECT pg_advisory_unlock(987654321)')
 }
 
 

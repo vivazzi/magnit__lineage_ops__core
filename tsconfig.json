@@ -17,7 +17,18 @@
     "module": "esnext",
     "paths": {
       "#root/*": ["./*"],
-      "#src/*": ["./src/*"],
+
+      "#scripts/*": ["./scripts/*"],
+
+      "#app/*": ["./src/app/*"],
+
+      "#config": ["./src/config"],
+
+      "#infra/*": ["./src/infra/*"],
+      "#db": ["./src/infra/db"],
+
+      "#modules/*": ["./src/modules/*"],
+      "#shared": ["./src/shared"],
     }
   },
   "include": ["src", "scripts"],

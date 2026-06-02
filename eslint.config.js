@@ -5,6 +5,7 @@ import eslintPluginUnicorn from 'eslint-plugin-unicorn'
 export default tseslint.config(
     {
         ignores: [
+            'generated/',
             'node_modules/',
             'build/',
             'dist/',

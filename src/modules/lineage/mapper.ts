@@ -1,9 +1,10 @@
-import { to_timestamp, to_timestamp_optional } from '#src/modules/lineage/utils.ts'
-import { result_codes } from '#src/modules/lineage/models.ts'
-import type { lineage_export } from '#root/generated/prisma'
+import { to_timestamp, to_timestamp_optional } from '#shared'
+
+import { result_codes } from './schemas.ts'
+import type { TLineageExport } from '#infra/db'
 
 
-export const map_lineage_task = (row: lineage_export) => ({
+export const map_lineage_task = (row: TLineageExport) => ({
     status: row.status,
 
     result_code: row.result_code ? result_codes.parse(row.result_code) : undefined,
@@ -21,11 +22,7 @@ export const map_lineage_task = (row: lineage_export) => ({
 })
 
 
-// import { to_timestamp_optional } from '#src/modules/lineage/utils.ts'
-// import { result_codes } from '#src/modules/lineage/models.ts'
-// import type { lineage_export } from '#root/generated/prisma'
-//
-//
+// todo: use this map for output (or this useless?)
 // export const map_lineage_task = (row: lineage_export) => ({
 //     status: row.status,
 //     result_code: row.result_code ? result_codes.parse(row.result_code) : undefined,

@@ -4,6 +4,10 @@ import { node_envs, NODE_ENVS } from './models.ts'
 import { split_env_array } from './utils.ts'
 
 
+const normalize_allowed_origins = (allowed_origins: string[]) =>
+    allowed_origins.length === 1 && allowed_origins[0] === '*' ? '*' : allowed_origins
+
+
 const config_schema = z.object({
     NODE_ENV: z.enum(node_envs).default(NODE_ENVS.DEVELOPMENT),
     CORE__ALLOWED_ORIGINS: z.preprocess(split_env_array(['*']), z.array(z.string())),
@@ -32,6 +36,6 @@ export const config = {
     },
 
     cors: {
-        allowed_origins: parsed.CORE__ALLOWED_ORIGINS,
+        allowed_origins: normalize_allowed_origins(parsed.CORE__ALLOWED_ORIGINS),
     },
 } as const

@@ -1,9 +1,8 @@
 import type { Request, Response, NextFunction } from 'express'
 import type { ZodSchema } from 'zod'
 
-import { is_prisma_error } from '#src/utils/prisma.ts'
-
-import { AppError, ERROR_CODES, ERROR_STATUS_MAP } from './errors.ts'
+import { is_prisma_error } from '#infra/db/errors.ts'
+import { AppError, ERROR_CODES, ERROR_STATUS_MAP } from '#shared'
 
 
 export const with_error_handler = <TBody>(

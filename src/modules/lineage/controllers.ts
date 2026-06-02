@@ -1,25 +1,23 @@
-import { createReadStream } from 'node:fs'
-
-import { constants } from 'node:fs'
+import { constants, createReadStream } from 'node:fs'
 import { access, stat } from 'node:fs/promises'
 // eslint-disable-next-line unicorn/import-style
 import { basename } from 'node:path'
 
-import { LineageExportStatus } from '#root/generated/prisma'
-import { with_error_handler } from '#src/utils/api.ts'
+import { LineageExportStatus } from '#db'
+import { with_error_handler } from '#app/http'
 
 import { create_lineage_task, get_lineage_task_status } from './services.ts'
-import type { TLineageExportInput, TLineageTaskIdInput } from './models.ts'
+import type { TLineageExportInput, TLineageTaskIdInput } from './schemas.ts'
 
 
-export const create_lineage_task_controller = with_error_handler<TLineageExportInput>(async (req, res, body) => {
+export const create_lineage_task_controller = with_error_handler<TLineageExportInput>(async (_req, res, body) => {
     const data = await create_lineage_task(body)
 
     return res.json(data)
 })
 
 
-export const get_lineage_status_controller = with_error_handler<TLineageTaskIdInput>(async (req, res, body) => {
+export const get_lineage_status_controller = with_error_handler<TLineageTaskIdInput>(async (_req, res, body) => {
     const data = await get_lineage_task_status(body)
 
     if (!data) {
@@ -32,7 +30,7 @@ export const get_lineage_status_controller = with_error_handler<TLineageTaskIdIn
 })
 
 
-export const download_lineage_controller = with_error_handler<TLineageTaskIdInput>(async (req, res, body) => {
+export const download_lineage_controller = with_error_handler<TLineageTaskIdInput>(async (_req, res, body) => {
     const data = await get_lineage_task_status(body)
 
     if (!data) {
@@ -55,6 +53,7 @@ export const download_lineage_controller = with_error_handler<TLineageTaskIdInpu
         const file_stat = await stat(data.path)
 
         if (!file_stat.isFile() || file_stat.size <= 0) {
+            // noinspection ExceptionCaughtLocallyJS
             throw new Error('Invalid file')
         }
 

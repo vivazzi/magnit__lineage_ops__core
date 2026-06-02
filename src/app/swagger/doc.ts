@@ -4,13 +4,11 @@ import path from 'node:path'
 import { OpenAPIRegistry, OpenApiGeneratorV3 } from '@asteasolutions/zod-to-openapi'
 import type { OpenAPIObject } from 'openapi3-ts/oas30'
 
-import { ROUTES } from '#src/modules/lineage/routes.const.ts'
-
-import { error_response } from './models.ts'
-
 import {
-    lineage_export_input, lineage_export_output, lineage_status_output, lineage_task_id_input,
-} from '#src/modules/lineage/models.ts'
+    LINEAGE_ROUTES, lineage_export_input, lineage_export_output, lineage_status_output, lineage_task_id_input,
+} from '#modules/lineage'
+
+import { error_response } from './schemas.ts'
 import { to_swagger_path } from './utils.ts'
 
 
@@ -39,7 +37,7 @@ export const TAGS = {
 // --- LINEAGE ---
 registry.registerPath({
     method: 'post',
-    path: ROUTES.LINEAGE_EXPORT,
+    path: LINEAGE_ROUTES.LINEAGE_EXPORT,
     tags: [TAGS.LINEAGE],
     description: 'Создаёт задачу на выгрузку Lineage',
     request: {
@@ -57,7 +55,7 @@ registry.registerPath({
 
 registry.registerPath({
     method: 'get',
-    path: to_swagger_path(ROUTES.LINEAGE_STATUS),
+    path: to_swagger_path(LINEAGE_ROUTES.LINEAGE_STATUS),
     tags: [TAGS.LINEAGE],
     description: 'Возвращает статус задачи по выгрузке Lineage',
     request: {
@@ -75,7 +73,7 @@ registry.registerPath({
 
 registry.registerPath({
     method: 'get',
-    path: to_swagger_path(ROUTES.LINEAGE_DOWNLOAD),
+    path: to_swagger_path(LINEAGE_ROUTES.LINEAGE_DOWNLOAD),
     tags: [TAGS.LINEAGE],
     description: 'Скачивание export-файла Lineage',
     request: {
