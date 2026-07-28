@@ -35,14 +35,14 @@ See the [main project README.md](../../README.md#project-concept-and-code-style)
 To automatically update Markdown table of contents (TOC), run:
 
 ```shell
-doctoc --title "## Navigation" --maxlevel 4 README.md
+pnpm dlx doctoc --title "## Navigation" --maxlevel 4 README.md
 ```
 
 
 ## Contributing
 
 To report bugs or suggest improvements, please use the 
-[issue tracker]((https://coderepo.corp.tander.ru/lineage_ops/lineage_ops_core/-/issues)
+[issue tracker](https://coderepo.corp.tander.ru/lineage_ops/lineage_ops_core/-/issues)
 
 If you discover a security issue in the code, do **not** create an issue or raise it in any public forum 
 until we have had a chance to address it. **For security issues, contact**: maltcev_a_v@magnit.ru
