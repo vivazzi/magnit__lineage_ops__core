@@ -24,15 +24,15 @@ export const config = {
     media: {
         root: '/app/media',
 
-        // публичный префикс nginx
+        // публичный префикс nginx  // todo
         url_prefix: '/media',
 
-        // внутренний nginx location (X-Accel)
+        // внутренний nginx location (X-Accel)  // todo
         internal_prefix: '/internal-media',
     },
 
     lineage: {
-        api_url: parsed.CORE__DOWNLOAD_LINEAGE_API_URL,
+        api_url: parsed.CORE__DOWNLOAD_LINEAGE_API_URL, // todo: remove
     },
 
     cors: {
